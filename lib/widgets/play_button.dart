@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PlayButton extends StatelessWidget {
-  const PlayButton({
-    Key key,
-  }) : super(key: key);
+  final Function _onPressedHandler;
+  
+  const PlayButton(this._onPressedHandler);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class PlayButton extends StatelessWidget {
             color: Colors.white
           ),
         ),
-        onPressed: () {},
+        onPressed: _onPressedHandler,
         elevation: 0.0,
         color: Colors.yellow.shade900,
         padding: EdgeInsets.symmetric(

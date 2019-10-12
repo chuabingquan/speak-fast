@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class Countdown extends StatelessWidget {
-  const Countdown({
-    Key key,
-  }) : super(key: key);
+  final int _countdown;
+
+  const Countdown(this._countdown);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Center(
         child: Text(
-          '15',
+          _countdown == null ? "" : _countdown.toString(),
           style: TextStyle(
             fontSize: 80,
             color: Colors.black87
