@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:diff_match_patch/diff_match_patch.dart';
 
 import '../widgets/score_card.dart';
+import '../widgets/play_button.dart';
+import './play_screen.dart';
 
 class CompleteScreen extends StatelessWidget {
   static const routeName = '/complete';
@@ -22,6 +24,7 @@ class CompleteScreen extends StatelessWidget {
             diffs.length *
             100)
         .ceil();
+    final next = session['next'] as Function;
 
     return Scaffold(
       appBar: AppBar(
@@ -53,12 +56,19 @@ class CompleteScreen extends StatelessWidget {
         width: double.infinity,
         color: Theme.of(context).primaryColor,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ScoreCard(
-              height: MediaQuery.of(context).size.height * 0.8,
+              height: MediaQuery.of(context).size.height * 0.3,
               score: score,
             ),
+            SizedBox(
+              height: 25,
+            ),
+            PlayButton('Go Faster!', () {
+              next();
+              Navigator.of(context).pushReplacementNamed(PlayScreen.routeName);
+            })
           ],
         ),
       ),

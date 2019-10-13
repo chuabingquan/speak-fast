@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class PlayButton extends StatelessWidget {
   final Function _onPressedHandler;
+  final String buttonText;
   
-  const PlayButton(this._onPressedHandler);
+  const PlayButton(this.buttonText, this._onPressedHandler);
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +14,8 @@ class PlayButton extends StatelessWidget {
         horizontal: 20,
       ),
       child: RaisedButton(
-        child: const Text(
-          'Play',
+        child: Text(
+          buttonText,
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 16,

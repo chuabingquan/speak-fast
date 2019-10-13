@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/video_preview.dart';
-
 class ScoreCard extends StatelessWidget {
   final double height;
   final int score;
@@ -33,16 +31,42 @@ class ScoreCard extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
-              Text('+$score points',
-                  style: TextStyle(
-                    fontSize: 18,
-                  )),
-              SizedBox(
-                height: 15,
-              ),
               Expanded(
-                child: VideoPreview(),
-              )
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.star,
+                          color: Colors.yellowAccent.shade700,
+                          size: 50,
+                        ),
+                        Icon(
+                          Icons.star,
+                          color: Colors.yellowAccent.shade700,
+                          size: 50,
+                        ),
+                        Icon(
+                          Icons.star,
+                          color: Colors.yellowAccent.shade700,
+                          size: 50,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      '+$score points',
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

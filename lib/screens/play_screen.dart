@@ -10,11 +10,14 @@ import '../widgets/text_content.dart';
 import '../widgets/countdown.dart';
 import '../widgets/play_button.dart';
 import './complete_screen.dart';
-
-import '../data.dart';
+import '../models/reading.dart';
 
 class PlayScreen extends StatefulWidget {
   static const routeName = '/';
+  final Reading _reading;
+  final Function next;
+
+  PlayScreen(this._reading, this.next);
 
   @override
   _PlayScreenState createState() => _PlayScreenState();
@@ -23,7 +26,7 @@ class PlayScreen extends StatefulWidget {
 class _PlayScreenState extends State<PlayScreen> {
   Timer _timer;
   bool _startGame = false;
-  int _countdown = 15;
+  int _countdown = 1;
   SpeechRecognition _speechRecognition;
   bool _isAvailable = false;
   bool _isListening = false;
@@ -36,6 +39,7 @@ class _PlayScreenState extends State<PlayScreen> {
   @override
   void initState() {
     super.initState();
+    _countdown = widget._reading.timeLimit;
     initSpeechRecognizer();
     initCameras();
   }
@@ -137,7 +141,7 @@ class _PlayScreenState extends State<PlayScreen> {
         String userTranscript = "" + _resultText;
         _resultText = "";
         Navigator.of(context).pushReplacementNamed(CompleteScreen.routeName,
-            arguments: {'reading': READINGS[0], 'transcript': userTranscript});
+            arguments: {'reading': widget._reading, 'transcript': userTranscript, 'next': widget.next});
       });
     }
   }
@@ -201,13 +205,13 @@ class _PlayScreenState extends State<PlayScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            TextContent(READINGS[0]),
+            TextContent(widget._reading),
             Countdown(_countdown),
             _startGame
                 ? SizedBox(
                     height: 25,
                   )
-                : PlayButton(() {
+                : PlayButton('Play', () {
                     setState(() {
                       _startGame = true;
                     });
