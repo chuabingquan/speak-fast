@@ -1,7 +1,7 @@
 import './models/reading.dart';
 
 final List<Reading> READINGS = const [
-  Reading("To thine own self be true, and it must follow, as the night the day, thou canst not then be false to any man.", 10),
-  Reading("Gucci gang, Gucci gang, Gucci gang, Gucci gang (Gucci gang) Gucci gang, Gucci gang, Gucci gang (Gucci gang)", 7),
-  Reading("How much wood would a woodchuck chuck if a woodchuck could chuck wood?", 5),
+  Reading("The real problem is that programmers have spent far too much time worrying about efficiency in the wrong places and at the wrong times, premature optimization is the root of all evil in programming", 5),
+  Reading("Gucci gang, Gucci gang, Gucci gang, Gucci gang Gucci gang, Gucci gang, Gucci gang", 3),
+  Reading("How much wood would a woodchuck chuck if a woodchuck could chuck wood", 5),
 ];

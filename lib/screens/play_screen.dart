@@ -1,12 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:speech_recognition/speech_recognition.dart';
+import 'package:camera/camera.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../widgets/text_content.dart';
 import '../widgets/countdown.dart';
 import '../widgets/play_button.dart';
 import './complete_screen.dart';
+
+import '../data.dart';
 
 class PlayScreen extends StatefulWidget {
   static const routeName = '/';
@@ -23,11 +28,16 @@ class _PlayScreenState extends State<PlayScreen> {
   bool _isAvailable = false;
   bool _isListening = false;
   String _resultText = "";
+  CameraController _cameraController;
+  String _videoPath;
+  List<CameraDescription> _cameras;
+  int _selectedCameraId;
 
   @override
   void initState() {
     super.initState();
     initSpeechRecognizer();
+    initCameras();
   }
 
   void initSpeechRecognizer() {
@@ -45,6 +55,78 @@ class _PlayScreenState extends State<PlayScreen> {
         .then((result) => setState(() => _isAvailable = result));
   }
 
+  void initCameras() {
+    availableCameras().then((availableCameras) {
+      _cameras = availableCameras;
+
+      if (_cameras.length > 0) {
+        setState(() {
+          _selectedCameraId = 1;
+        });
+
+        _onCameraSwitched(_cameras[_selectedCameraId]).then((void v) {});
+      }
+    }).catchError((err) {
+      print('$err');
+    });
+  }
+
+  Future<void> _onCameraSwitched(CameraDescription cameraDescription) async {
+    if (_cameraController != null) await _cameraController.dispose();
+
+    _cameraController =
+        CameraController(cameraDescription, ResolutionPreset.high);
+    _cameraController.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
+    try {
+      await _cameraController.initialize();
+    } on CameraException catch (err) {
+      print('$err');
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<String> _startVideoRecording() async {
+    if (!_cameraController.value.isInitialized) return null;
+    if (_cameraController.value.isRecordingVideo) return null;
+
+    final Directory appDirectory = await getApplicationDocumentsDirectory();
+    final String videoDirectory = '${appDirectory.path}/Videos';
+    await Directory(videoDirectory).create(recursive: true);
+    final String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
+    final String filePath = '$videoDirectory/$currentTime.mp4';
+
+    try {
+      await _cameraController.startVideoRecording(filePath);
+      _videoPath = filePath;
+    } on CameraException catch (err) {
+      print('START: $err');
+      throw err;
+      // return null;
+    }
+
+    return filePath;
+  }
+
+  Future<void> _stopVideoRecording() async {
+    if (!_cameraController.value.isRecordingVideo) return null;
+
+    try {
+      await _cameraController.stopVideoRecording();
+    } on CameraException catch (err) {
+      print('STOP: $err');
+      throw err;
+      // return null;
+    }
+  }
+
   void _stopListening() {
     if (_isListening) {
       _speechRecognition.stop().then((result) {
@@ -52,10 +134,10 @@ class _PlayScreenState extends State<PlayScreen> {
           _isListening = result;
           _startGame = false;
         });
-        String userTranscript = ""+_resultText;
+        String userTranscript = "" + _resultText;
         _resultText = "";
-        Navigator.of(context)
-            .pushReplacementNamed(CompleteScreen.routeName, arguments: userTranscript);
+        Navigator.of(context).pushReplacementNamed(CompleteScreen.routeName,
+            arguments: {'reading': READINGS[0], 'transcript': userTranscript});
       });
     }
   }
@@ -67,9 +149,14 @@ class _PlayScreenState extends State<PlayScreen> {
         (Timer timer) => setState(() {
               if (_countdown < 1) {
                 timer.cancel();
+                // _stopVideoRecording().then((_) {
+                //   if (mounted) setState(() {});
+                // });
                 next();
-              } else
-                _countdown -= 1;
+              } else _countdown -= 1;
+              // else if (_countdown == 4) {
+              //   _startVideoRecording().then((filePath) {});
+              // }
             }));
   }
 
@@ -114,7 +201,7 @@ class _PlayScreenState extends State<PlayScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            TextContent(),
+            TextContent(READINGS[0]),
             Countdown(_countdown),
             _startGame
                 ? SizedBox(

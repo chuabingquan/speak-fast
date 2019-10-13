@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../models/reading.dart';
+
 class TextContent extends StatelessWidget {
-  final String text1 =
-      "To thine own self be true, and it must follow, as the night the day, thou canst not then be false to any man.";
-  final String text2 =
-      "Gucci gang, Gucci gang, Gucci gang, Gucci gang (Gucci gang) Gucci gang, Gucci gang, Gucci gang (Gucci gang)";
+  final Reading reading;
+
+  TextContent(this.reading);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,7 +27,7 @@ class TextContent extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 30, horizontal: 30),
           child: Text(
-            text1,
+            this.reading.content,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w400,

@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:diff_match_patch/diff_match_patch.dart';
+
+import '../widgets/score_card.dart';
 
 class CompleteScreen extends StatelessWidget {
   static const routeName = '/complete';
 
   @override
   Widget build(BuildContext context) {
-    final userTranscript = ModalRoute.of(context).settings.arguments as String;
-    print("Captured: $userTranscript");
+    final session =
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    final readingContent = session['reading'].content as String;
+    final transcript = session['transcript'] as String;
+    var diffs = DiffMatchPatch().diff(readingContent, transcript);
+    final score = (diffs.fold(0, (acc, diff) {
+              if (diff.operation == 0)
+                return acc + 1;
+              else
+                return acc;
+            }) /
+            diffs.length *
+            100)
+        .ceil();
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -33,7 +49,19 @@ class CompleteScreen extends StatelessWidget {
         ),
         elevation: 0.0,
       ),
-      body: Container(),
+      body: Container(
+        width: double.infinity,
+        color: Theme.of(context).primaryColor,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            ScoreCard(
+              height: MediaQuery.of(context).size.height * 0.8,
+              score: score,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
