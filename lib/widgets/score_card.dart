@@ -29,7 +29,7 @@ class ScoreCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   )),
               SizedBox(
-                height: 10,
+                height: 5,
               ),
               Expanded(
                 child: Column(
